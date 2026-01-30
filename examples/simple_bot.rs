@@ -5,24 +5,31 @@
 //!
 //! # Setup
 //! 1. Create a bot with BotFather on Telegram to get your bot token
-//! 2. Set the BOT_TOKEN environment variable: export BOT_TOKEN="your_token_here"
+//! 2. Set the TELEGRAM_BOT_TOKEN environment variable
 //! 3. Run: cargo run --example simple_bot
 
-use telegram_rs::BotClient;
+use telegram_rs::Bot;
+use telegram_rs::rt::polling::Polling;
 
 #[tokio::main]
-async fn main() {
-    // TODO: Implement complete example
+async fn main() -> telegram_rs::Result<()> {
     println!("Simple Bot Example");
-    println!("This example demonstrates basic bot setup.");
     
     // Get bot token from environment
-    let bot_token = std::env::var("BOT_TOKEN")
-        .expect("BOT_TOKEN environment variable not set");
+    let token = std::env::var("TELEGRAM_BOT_TOKEN")
+        .unwrap_or("Your-bot token".to_string());
     
-    // Create bot client
-    let _bot = BotClient::new(bot_token);
+    // Create bot instance
+    let bot = Bot::new(token);
     
-    println!("Bot initialized successfully!");
-    println!("Full implementation coming soon...");
+    // Create polling instance
+    let mut polling = Polling::new(bot);
+    
+    println!("Bot initialized successfully! Starting polling...");
+    
+    while let Some(update) = polling.next_update().await? {
+        println!("Received update: {:?}", update);
+    }
+    
+    Ok(())
 }

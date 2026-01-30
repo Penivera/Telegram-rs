@@ -9,13 +9,19 @@ readme = "README.md"
 keywords = ["telegram", "bot", "mini-app", "async", "ton"]
 categories = ["api-bindings", "command-line-utilities", "network-programming"]
 
+[workspace]
+members = ["telegram-macros"]
+
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.12", features = ["json", "multipart"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-url = "2.4"
+url = "2.5"
 log = "0.4"
+thiserror = "1.0"
+actix-web = { version = "4", optional = true }
+telegram-macros = { path = "telegram-macros", version = "0.1.0" }
 
 [dev-dependencies]
 tokio-test = "0.4"
@@ -25,6 +31,7 @@ default = ["bot"]
 bot = []
 mini-app = []
 wallet = []
+webhook = ["actix-web"]
 
 [profile.release]
 opt-level = 3

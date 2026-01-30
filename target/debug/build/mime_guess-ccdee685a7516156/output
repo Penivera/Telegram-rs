@@ -1,0 +1,1 @@
+cargo:rustc-env=MIME_TYPES_GENERATED_PATH=/Users/Penivera/Projects/Telegram-rs/target/debug/build/mime_guess-ccdee685a7516156/out/mime_types_generated.rs

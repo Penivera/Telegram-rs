@@ -16,16 +16,19 @@
 //! telegram-rs = "0.1"
 //! ```
 
-pub mod bot;
 pub mod errors;
-pub mod utils;
+pub mod client;
+pub mod core;
+pub mod rt;
+
+pub use core::Bot;
+pub use core::types::Update;
+
+pub use self::errors::{Error, Result};
+pub use telegram_macros::*;
 
 #[cfg(feature = "mini-app")]
 pub mod mini_app;
 
 #[cfg(feature = "wallet")]
 pub mod wallet;
-
-// Re-export commonly used types
-pub use bot::client::BotClient;
-pub use errors::{Error, Result};
