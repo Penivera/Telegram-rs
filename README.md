@@ -31,12 +31,19 @@ telegram-rs = { version = "0.1", features = ["mini-app", "wallet"] }
 ### Basic Bot
 
 ```rust
-use telegram_rs::BotClient;
+use telegram_rs::{Bot, Result};
+use telegram_rs::rt::polling::Polling;
 
 #[tokio::main]
-async fn main() {
-    let bot = BotClient::new("YOUR_BOT_TOKEN".to_string());
-    // Send messages and handle updates...
+async fn main() -> Result<()> {
+    let token = "YOUR_BOT_TOKEN".to_string();
+    let bot = Bot::new(token);
+    let mut polling = Polling::new(bot);
+
+    while let Some(update) = polling.next_update().await? {
+        println!("Received update: {:?}", update);
+    }
+    Ok(())
 }
 ```
 
@@ -81,18 +88,18 @@ async fn main() {
 telegram-rs/
 ├── src/
 │   ├── lib.rs              # Main library entry point
-│   ├── bot/                # Bot API module
-│   │   ├── client.rs       # Async API client
-│   │   ├── updates.rs      # Update handling
-│   │   └── handlers.rs     # Event handlers and middleware
+│   ├── client.rs           # HTTP client implementation
+│   ├── core/               # Core types and traits
+│   │   ├── bot.rs          # Bot struct
+│   │   ├── types.rs        # Telegram API types
+│   │   └── requests.rs     # Method traits
+│   ├── rt/                 # Runtime modules (Polling, Webhook)
+│   │   ├── polling.rs      # Long-polling implementation
+│   │   └── webhook.rs      # Webhook server (actix-web)
 │   ├── mini_app/           # Mini App module (feature-gated)
-│   │   ├── init.rs         # InitData parsing/validation
-│   │   └── bridge.rs       # WASM bridge
 │   ├── wallet/             # Wallet module (feature-gated)
-│   │   ├── ton.rs          # TON Connect implementation
-│   │   └── session.rs      # Session management
-│   ├── utils.rs            # Shared utilities
 │   └── errors.rs           # Custom error types
+├── telegram-macros/        # Procedural macros crate
 ├── examples/               # Example applications
 ├── tests/                  # Integration tests
 └── benches/                # Benchmarks

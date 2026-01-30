@@ -1,10 +1,10 @@
 [package]
-name = "telegram-rs"
+name = "telegram-rs-2"
 version = "0.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "A comprehensive Rust library for building Telegram bots and Mini Apps with optional wallet integration"
-repository = "https://github.com/yourusername/telegram-rs"
+repository = "https://github.com/Penivera/Telegram-rs"
 readme = "README.md"
 keywords = ["telegram", "bot", "mini-app", "async", "ton"]
 categories = ["api-bindings", "command-line-utilities", "network-programming"]

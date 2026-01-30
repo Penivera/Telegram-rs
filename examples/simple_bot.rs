@@ -17,7 +17,7 @@ async fn main() -> telegram_rs::Result<()> {
     
     // Get bot token from environment
     let token = std::env::var("TELEGRAM_BOT_TOKEN")
-        .unwrap_or("Your-bot token".to_string());
+        .unwrap_or("8241173620:AAFTsEgLr7ZeXTWotBtGNECcaTUqLOHN8as".to_string());
     
     // Create bot instance
     let bot = Bot::new(token);
