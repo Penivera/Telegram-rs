@@ -117,15 +117,15 @@ h3 {
   max-width: 75ch;
 }
 
+
 .footer {
   background-color: var(--color-bg-dark);
   color: var(--color-text-dark);
   text-align: center;
   padding: 1rem;
-  position: fixed;
-  bottom: 0;
   width: 100%;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
 }
 
 .footer.dark-mode {

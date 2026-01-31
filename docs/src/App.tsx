@@ -49,7 +49,7 @@ function App() {
           </Routes>
         </main>
       </div>
-      <footer className="footer">
+      <footer className="footer w-full mt-8">
         <p>© 2026 Telegram-rs. All rights reserved. | <a href="https://github.com/Penivera/Telegram-rs" className="text-primary">GitHub</a></p>
       </footer>
     </Router>
