@@ -1,29 +1,57 @@
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './components/Home';
 import ApiDocs from './components/ApiDocs';
 import Examples from './components/Examples';
 import Demos from './components/Demos';
-import './App.css';
+import './styles.css';
 
 function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)'
+    ).matches;
+    setDarkMode(prefersDark);
+    document.body.classList.toggle('dark-mode', prefersDark);
+  }, []);
+
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode', !darkMode);
+  };
+
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
-        <nav className="bg-blue-600 p-4">
-          <div className="container mx-auto flex space-x-4">
-            <Link to="/" className="text-white hover:text-gray-200">Home</Link>
-            <Link to="/api" className="text-white hover:text-gray-200">API Docs</Link>
-            <Link to="/examples" className="text-white hover:text-gray-200">Examples</Link>
-            <Link to="/demos" className="text-white hover:text-gray-200">Demos</Link>
-          </div>
-        </nav>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/api" element={<ApiDocs />} />
-          <Route path="/examples" element={<Examples />} />
-          <Route path="/demos" element={<Demos />} />
-        </Routes>
+      <div className="flex">
+        <aside className="sidebar">
+          <h1 className="text-2xl font-bold mb-4">Telegram-rs Docs</h1>
+          <nav>
+            <Link to="/" className="block mb-2">Home</Link>
+            <Link to="/api" className="block mb-2">API Docs</Link>
+            <Link to="/examples" className="block mb-2">Examples</Link>
+            <Link to="/demos" className="block mb-2">Demos</Link>
+          </nav>
+          <button
+            onClick={toggleTheme}
+            className="mt-4 p-2 bg-primary text-white rounded flex items-center justify-center"
+          >
+            {darkMode ? '🌞 Light Mode' : '🌙 Dark Mode'}
+          </button>
+        </aside>
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/api" element={<ApiDocs />} />
+            <Route path="/examples" element={<Examples />} />
+            <Route path="/demos" element={<Demos />} />
+          </Routes>
+        </main>
       </div>
+      <footer className="footer">
+        <p>© 2026 Telegram-rs. All rights reserved. | <a href="https://github.com/Penivera/Telegram-rs" className="text-primary">GitHub</a></p>
+      </footer>
     </Router>
   );
 }
