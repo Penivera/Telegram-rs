@@ -1,11 +1,13 @@
 #[cfg(feature = "webhook")]
-use telegram_rs::{Bot, Update};
+use telegram_rs_2::{Bot, Result};
 #[cfg(feature = "webhook")]
-use telegram_rs::rt::webhook::Webhook;
+use telegram_rs_2::rt::webhook::Webhook;
+#[cfg(feature = "webhook")]
+use telegram_rs_2::core::types::Update;
 
 #[cfg(feature = "webhook")]
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> Result<()> {
     let token = std::env::var("TELEGRAM_BOT_TOKEN").unwrap_or("123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11".to_string());
     let bot = Bot::new(token);
 

@@ -1,5 +1,5 @@
-use telegram_rs::{Bot, Result};
-use telegram_rs::rt::polling::Polling;
+use telegram_rs_2::{Bot, Result};
+use telegram_rs_2::rt::polling::Polling;
 
 #[tokio::main]
 async fn main() -> Result<()> {

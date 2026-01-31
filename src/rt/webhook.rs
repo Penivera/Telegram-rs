@@ -1,7 +1,6 @@
-use crate::Bot;
 use crate::core::types::Update;
-use actix_web::{web, App, HttpServer, HttpResponse, Responder};
-use std::sync::Arc;
+use crate::Bot;
+use actix_web::{web, App, HttpResponse, HttpServer};
 
 pub struct Webhook {
     bot: Bot,
@@ -28,31 +27,52 @@ impl Webhook {
         self
     }
 
-    pub async fn run<F, Fut>(self, handler: F) -> std::io::Result<()> 
+    pub async fn run<F, Fut>(self, handler: F) -> std::io::Result<()>
     where
         F: Fn(Update, Bot) -> Fut + Send + Sync + 'static + Clone,
         Fut: std::future::Future<Output = ()> + Send,
     {
         let bot = self.bot.clone();
         let path = self.path.clone();
-        
+
         HttpServer::new(move || {
             let bot_clone = bot.clone();
             let handler_clone = handler.clone();
-            
-            App::new()
-                .app_data(web::Data::new(bot_clone))
-                .route(&path, web::post().to(move |update: web::Json<Update>, bot_data: web::Data<Bot>| {
+
+            App::new().app_data(web::Data::new(bot_clone)).route(
+                &path,
+                web::post().to(move |update: web::Json<Update>, bot_data: web::Data<Bot>| {
                     let bot = bot_data.get_ref().clone();
                     let handler = handler_clone.clone();
                     async move {
                         handler(update.into_inner(), bot).await;
                         HttpResponse::Ok().finish()
                     }
-                }))
+                }),
+            )
         })
         .bind(("0.0.0.0", self.port))?
         .run()
         .await
+    }
+
+    /// Process a raw JSON update string. Useful for custom server integrations.
+    ///
+    /// # Arguments
+    /// * `raw_update` - The JSON string containing the update
+    /// * `bot` - Copy of the Bot instance
+    /// * `handler` - Async function to handle the parsed update
+    pub async fn process_update<F, Fut>(
+        raw_update: &str,
+        bot: Bot,
+        handler: F,
+    ) -> Result<(), crate::Error>
+    where
+        F: Fn(Update, Bot) -> Fut + Send + Sync,
+        Fut: std::future::Future<Output = ()> + Send,
+    {
+        let update: Update = serde_json::from_str(raw_update)?;
+        handler(update, bot).await;
+        Ok(())
     }
 }

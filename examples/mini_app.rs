@@ -7,7 +7,8 @@
 //! Run with mini-app feature: cargo run --example mini_app --features mini-app
 
 #[cfg(feature = "mini-app")]
-use telegram_rs::mini_app::InitData;
+use telegram_rs_2::mini_app::InitData;
+
 
 fn main() {
     #[cfg(feature = "mini-app")]

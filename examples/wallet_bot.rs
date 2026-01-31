@@ -7,7 +7,9 @@
 //! Run with wallet feature: cargo run --example wallet_bot --features wallet
 
 #[cfg(feature = "wallet")]
-use telegram_rs::wallet::{TonConnector, WalletSession};
+use telegram_rs_2::{Bot, Result};
+#[cfg(feature = "wallet")]
+use telegram_rs_2::wallet::{TonConnector, TonConnectConfig};
 
 fn main() {
     #[cfg(feature = "wallet")]
