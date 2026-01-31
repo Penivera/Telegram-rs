@@ -113,6 +113,9 @@ Run examples with:
 # Basic bot
 cargo run --example simple_bot
 
+# Weather bot (requires OPENWEATHER_API_KEY env var)
+cargo run --example weather_bot
+
 # Mini App (requires mini-app feature)
 cargo run --example mini_app --features mini-app
 
