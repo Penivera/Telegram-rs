@@ -14,12 +14,20 @@ function App() {
       '(prefers-color-scheme: dark)'
     ).matches;
     setDarkMode(prefersDark);
-    document.body.classList.toggle('dark-mode', prefersDark);
+    if (prefersDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
 
   const toggleTheme = () => {
     setDarkMode(!darkMode);
-    document.body.classList.toggle('dark-mode', !darkMode);
+    if (!darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
   };
 
   return (
