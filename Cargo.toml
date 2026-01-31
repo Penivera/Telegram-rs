@@ -1,6 +1,6 @@
 [package]
 name = "telegram-rs-2"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 description = "A comprehensive Rust library for building Telegram bots and Mini Apps with optional wallet integration"
