@@ -1,11 +1,11 @@
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::sync::Arc;
+use telegram_rs_2::core::requests::SendMessage;
+use telegram_rs_2::rt::polling::Polling;
+use telegram_rs_2::{Bot, Result};
 use tokio::sync::Mutex;
 use tokio::time::{Duration, Instant};
-use telegram_rs_2::{Bot, Result};
-use telegram_rs_2::rt::polling::Polling;
-use telegram_rs_2::core::requests::SendMessage;
-use serde::Deserialize;
 
 #[derive(Deserialize)]
 struct WeatherResponse {
@@ -34,10 +34,8 @@ struct CacheEntry {
 async fn main() -> Result<()> {
     println!("Weather Bot Example");
 
-    let token = std::env::var("TELEGRAM_BOT_TOKEN")
-        .expect("TELEGRAM_BOT_TOKEN must be set");
-    let api_key = std::env::var("OPENWEATHER_API_KEY")
-        .expect("OPENWEATHER_API_KEY must be set");
+    let token = std::env::var("TELEGRAM_BOT_TOKEN").expect("TELEGRAM_BOT_TOKEN must be set");
+    let api_key = std::env::var("OPENWEATHER_API_KEY").expect("OPENWEATHER_API_KEY must be set");
 
     let bot = Bot::new(token);
     let mut polling = Polling::new(bot.clone());
@@ -105,10 +103,13 @@ async fn main() -> Result<()> {
 
                                         // Cache the result
                                         let mut cache_lock = cache.lock().await;
-                                        cache_lock.insert(cache_key, CacheEntry {
-                                            data: description,
-                                            timestamp: Instant::now(),
-                                        });
+                                        cache_lock.insert(
+                                            cache_key,
+                                            CacheEntry {
+                                                data: description,
+                                                timestamp: Instant::now(),
+                                            },
+                                        );
                                     }
                                     Err(_) => {
                                         let req = SendMessage {
