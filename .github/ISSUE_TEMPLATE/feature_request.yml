@@ -1,0 +1,37 @@
+name: "✨ Feature Request"
+description: Suggest an idea or enhancement for telegram-rs
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting an improvement to telegram-rs!
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Motivation
+      description: Is your feature request related to a problem or missing capability? Please describe.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution or API Design
+      description: Describe what API or behavior you would like to see.
+      placeholder: |
+        ```rust
+        // Example proposed API
+        ```
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or workarounds you have considered.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Links to Telegram Bot API documentation, PRD references, or other libraries.

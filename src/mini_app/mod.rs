@@ -6,4 +6,4 @@
 pub mod bridge;
 pub mod init;
 
-pub use init::InitData;
+pub use init::{InitData, UserData};

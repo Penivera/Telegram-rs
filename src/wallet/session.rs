@@ -1,30 +1,63 @@
-//! Wallet session management
+//! TON Connect session lifecycle management and storage.
 //!
-//! This module manages secure sessions for wallet interactions.
-//! Handles session lifecycle, encryption, and data persistence.
+//! Handles tracking active wallet connections, expiration timestamps,
+//! and session cleanup.
 
 use crate::Result;
 use serde::{Deserialize, Serialize};
+use std::time::{SystemTime, UNIX_EPOCH};
 
-/// Represents an active wallet session
-#[derive(Debug, Clone, Serialize, Deserialize)]
+fn current_timestamp() -> i32 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs() as i32
+}
+
+/// Represents an active wallet connection session between a client and a TON wallet.
+///
+/// Tracks session identifiers, connected wallet addresses, and expiration times.
+///
+/// # Examples
+///
+/// ```
+/// use telegram_rs_2::wallet::WalletSession;
+///
+/// let mut session = WalletSession::new("session_abc123".to_string());
+/// assert!(session.is_active);
+/// assert!(session.is_valid());
+///
+/// session.set_wallet_address("EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N".to_string());
+/// assert_eq!(session.wallet_address.as_deref(), Some("EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N"));
+///
+/// session.close();
+/// assert!(!session.is_valid());
+/// ```
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct WalletSession {
-    /// Session ID
+    /// Unique session identifier.
     pub session_id: String,
-    /// Connected wallet address
+
+    /// Address of the connected TON wallet (if connected).
     pub wallet_address: Option<String>,
-    /// Session creation timestamp
+
+    /// Creation unix timestamp in seconds.
     pub created_at: i32,
-    /// Session expiration timestamp
+
+    /// Expiration unix timestamp in seconds.
     pub expires_at: i32,
-    /// Whether the session is active
+
+    /// Flag indicating whether the session is active and not manually revoked.
     pub is_active: bool,
 }
 
 impl WalletSession {
-    /// Create a new wallet session
+    /// Creates a new `WalletSession` with a 1-hour expiration window.
+    ///
+    /// # Arguments
+    /// * `session_id` - Unique identifier for the session.
     pub fn new(session_id: String) -> Self {
-        let now = chrono::Local::now().timestamp() as i32;
+        let now = current_timestamp();
         WalletSession {
             session_id,
             wallet_address: None,
@@ -34,67 +67,77 @@ impl WalletSession {
         }
     }
 
-    /// Set the wallet address for this session
+    /// Sets the connected TON wallet address for this session.
     pub fn set_wallet_address(&mut self, address: String) {
         self.wallet_address = Some(address);
     }
 
-    /// Check if session is still valid
+    /// Checks if the session is currently active and has not expired.
     pub fn is_valid(&self) -> bool {
-        let now = chrono::Local::now().timestamp() as i32;
+        let now = current_timestamp();
         self.is_active && now < self.expires_at
     }
 
-    /// Close the session
+    /// Closes and deactivates the session.
     pub fn close(&mut self) {
         self.is_active = false;
     }
 
-    /// Extend session expiration
+    /// Extends the session's expiration timestamp by additional seconds.
+    ///
+    /// # Arguments
+    /// * `additional_seconds` - Seconds to add to `expires_at`.
     pub fn extend(&mut self, additional_seconds: i32) {
         self.expires_at += additional_seconds;
     }
 
-    /// Send a transaction using this session
-    /// TODO: Implement transaction sending
+    /// Sends a cryptocurrency transfer transaction using this connected session.
     pub async fn send_transaction(&self, _destination: &str, _amount: u64) -> Result<String> {
         todo!("Transaction sending not yet implemented")
     }
 
-    /// Sign data using the connected wallet
-    /// TODO: Implement signing
+    /// Requests the connected wallet to sign arbitrary binary data.
     pub async fn sign_data(&self, _data: &[u8]) -> Result<Vec<u8>> {
         todo!("Data signing not yet implemented")
     }
 
-    /// Encrypt data for secure transmission
-    /// TODO: Implement encryption
+    /// Encrypts data for secure peer-to-peer transmission to the wallet.
     pub fn encrypt_data(&self, _data: &[u8]) -> Result<Vec<u8>> {
         todo!("Data encryption not yet implemented")
     }
 
-    /// Decrypt data
-    /// TODO: Implement decryption
+    /// Decrypts data received from the connected wallet.
     pub fn decrypt_data(&self, _encrypted_data: &[u8]) -> Result<Vec<u8>> {
         todo!("Data decryption not yet implemented")
     }
 }
 
-/// Session manager for handling multiple wallet sessions
+/// In-memory manager for creating and tracking [`WalletSession`] instances.
+///
+/// # Examples
+///
+/// ```
+/// use telegram_rs_2::wallet::SessionManager;
+///
+/// let mut manager = SessionManager::new();
+/// let session = manager.create_session().expect("Failed to create session");
+/// let session_id = session.session_id.clone();
+///
+/// assert!(manager.get_session(&session_id).is_some());
+/// ```
 pub struct SessionManager {
     sessions: std::collections::HashMap<String, WalletSession>,
-    // TODO: Add persistence layer
 }
 
 impl SessionManager {
-    /// Create a new session manager
+    /// Creates a new, empty `SessionManager`.
     pub fn new() -> Self {
         SessionManager {
             sessions: std::collections::HashMap::new(),
         }
     }
 
-    /// Create a new session
+    /// Generates a new random session ID using UUID v4 and stores the newly created [`WalletSession`].
     pub fn create_session(&mut self) -> Result<WalletSession> {
         let session_id = uuid::Uuid::new_v4().to_string();
         let session = WalletSession::new(session_id.clone());
@@ -102,17 +145,17 @@ impl SessionManager {
         Ok(session)
     }
 
-    /// Get an existing session
+    /// Retrieves an immutable reference to a session by ID.
     pub fn get_session(&self, session_id: &str) -> Option<&WalletSession> {
         self.sessions.get(session_id)
     }
 
-    /// Get a mutable session
+    /// Retrieves a mutable reference to a session by ID.
     pub fn get_session_mut(&mut self, session_id: &str) -> Option<&mut WalletSession> {
         self.sessions.get_mut(session_id)
     }
 
-    /// Remove an expired session
+    /// Iterates through stored sessions and removes any that are expired or inactive.
     pub fn cleanup_expired_sessions(&mut self) {
         self.sessions.retain(|_, session| session.is_valid());
     }
@@ -121,25 +164,5 @@ impl SessionManager {
 impl Default for SessionManager {
     fn default() -> Self {
         Self::new()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_wallet_session_creation() {
-        let session = WalletSession::new("session123".to_string());
-        assert_eq!(session.session_id, "session123");
-        assert!(session.is_active);
-    }
-
-    #[test]
-    fn test_session_manager() {
-        let mut manager = SessionManager::new();
-        // Note: create_session requires uuid crate to be added
-        // This test is a placeholder
-        assert_eq!(manager.sessions.len(), 0);
     }
 }

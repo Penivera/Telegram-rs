@@ -7,27 +7,18 @@
 //! Run with wallet feature: cargo run --example wallet_bot --features wallet
 
 #[cfg(feature = "wallet")]
-use telegram_rs_2::{Bot, Result};
-#[cfg(feature = "wallet")]
-use telegram_rs_2::wallet::{TonConnector, TonConnectConfig};
+use telegram_rs_2::wallet::{TonConnectConfig, TonConnector};
 
 fn main() {
     #[cfg(feature = "wallet")]
     {
         println!("Bot with Wallet Integration Example");
-        println!("This example demonstrates wallet integration with TON Connect.");
-        
-        // TODO: Implement complete example
-        println!("Full implementation coming soon...");
-        
-        // Example of what the full implementation might look like:
-        // let config = TonConnectConfig::new("https://example.com/manifest.json".to_string());
-        // let connector = TonConnector::new(config);
-        // 
-        // // In a real bot, this would be called when user wants to connect wallet
-        // if let Ok(url) = connector.generate_connection_url() {
-        //     println!("Connection URL: {}", url);
-        // }
+        let config = TonConnectConfig::new("https://example.com/manifest.json".to_string());
+        let connector = TonConnector::new(config);
+        println!(
+            "Initialized TON Connector with manifest: {}",
+            connector.config().manifest_url
+        );
     }
 
     #[cfg(not(feature = "wallet"))]

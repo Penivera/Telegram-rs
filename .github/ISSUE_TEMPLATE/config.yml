@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/Penivera/Telegram-rs/discussions
+    about: Ask general questions, share ideas, and connect with other users.
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/Penivera/Telegram-rs/security/advisories/new
+    about: Privately report a security vulnerability according to our security policy.
+  - name: 📖 Documentation
+    url: https://docs.rs/telegram-rs-2
+    about: View the API documentation for telegram-rs on docs.rs.

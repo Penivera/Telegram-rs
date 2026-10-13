@@ -6,8 +6,15 @@ license = "MIT OR Apache-2.0"
 description = "A comprehensive Rust library for building Telegram bots and Mini Apps with optional wallet integration"
 repository = "https://github.com/Penivera/Telegram-rs"
 readme = "README.md"
-keywords = ["telegram", "bot", "mini-app", "async", "ton"]
-categories = ["api-bindings", "command-line-utilities", "network-programming"]
+documentation = "https://docs.rs/telegram-rs-2"
+homepage = "https://github.com/Penivera/Telegram-rs"
+rust-version = "1.75.0"
+keywords = ["telegram", "bot", "mini-app", "ton", "async"]
+categories = ["api-bindings", "asynchronous", "network-programming"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [workspace]
 members = ["telegram-macros"]
@@ -19,7 +26,12 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 url = "2.5"
 log = "0.4"
+hmac = "0.12"
+sha2 = "0.10"
+hex = "0.4"
+urlencoding = "2.1"
 thiserror = "1.0"
+uuid = { version = "1.0", features = ["v4"], optional = true }
 actix-web = { version = "4", optional = true }
 telegram-macros = { path = "telegram-macros", version = "0.1.0" }
 
@@ -31,7 +43,7 @@ hyper = { version = "0.14", features = ["full"] }
 default = ["bot"]
 bot = []
 mini-app = []
-wallet = []
+wallet = ["uuid"]
 webhook = ["actix-web"]
 
 [profile.release]

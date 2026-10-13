@@ -2,12 +2,13 @@
 
 #[cfg(test)]
 mod tests {
-    use telegram_rs::BotClient;
+    use telegram_rs_2::Bot;
 
     #[test]
-    fn test_bot_client_creation() {
-        let bot = BotClient::new("token123".to_string());
-        assert_eq!(bot.token(), "token123");
+    fn test_bot_creation() {
+        let _bot = Bot::new("token123".to_string());
+        // Bot struct doesn't expose token getter publicly currently,
+        // so we just verify instantiation doesn't panic.
     }
 
     // TODO: Add integration tests with Telegram test bots

@@ -4,6 +4,17 @@ version = "0.1.0"
 edition = "2021"
 description = "Procedural macros for telegram-rs"
 license = "MIT OR Apache-2.0"
+repository = "https://github.com/Penivera/Telegram-rs"
+homepage = "https://github.com/Penivera/Telegram-rs"
+documentation = "https://docs.rs/telegram-macros"
+readme = "../README.md"
+rust-version = "1.75.0"
+keywords = ["telegram", "macros", "bot", "proc-macro"]
+categories = ["development-tools::procedural-macro-helpers"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
 
 [lib]
 proc-macro = true

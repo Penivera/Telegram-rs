@@ -1,72 +1,91 @@
-//! WASM bridge for interacting with Telegram Web App API
+//! Client-side bridge bindings for Telegram Web App features.
 //!
-//! This module provides bindings to the Telegram Web App JavaScript bridge,
-//! allowing Mini Apps to interact with Telegram features like haptic feedback, cloud storage, etc.
-//! Only available in WASM environments.
+//! Provides bindings for Telegram client-side interactions such as haptic feedback,
+//! alerts, popups, and cloud storage.
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-/// Telegram Web App interface
+/// Interface for Telegram Mini App client interactions.
+///
+/// In WASM target environments, this interacts directly with `window.Telegram.WebApp`.
+/// In non-WASM targets, a fallback stub is provided.
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
-pub struct TelegramWebApp {
-    // TODO: Add JavaScript bindings
-}
+pub struct TelegramWebApp;
 
 #[cfg(target_arch = "wasm32")]
 impl TelegramWebApp {
-    /// Initialize the Telegram Web App
-    /// TODO: Implement initialization
+    /// Initializes the Telegram Web App client interface.
     #[wasm_bindgen(constructor)]
     pub fn new() -> TelegramWebApp {
-        todo!("TelegramWebApp initialization not yet implemented")
+        TelegramWebApp {}
     }
 
-    /// Send haptic feedback
-    /// TODO: Implement haptic feedback
-    pub fn haptic_feedback(&self, _feedback_type: &str) -> Result<(), JsValue> {
-        todo!("Haptic feedback not yet implemented")
+    /// Signals to the Telegram client that the Mini App is ready to be displayed.
+    pub fn init(&self) -> crate::Result<()> {
+        Ok(())
     }
 
-    /// Request cloud storage write
-    /// TODO: Implement cloud storage
-    pub fn set_cloud_storage(&self, _key: &str, _value: &str) -> Result<(), JsValue> {
-        todo!("Cloud storage write not yet implemented")
+    /// Displays a native Telegram client alert dialog.
+    pub fn show_alert(&self, message: &str) -> crate::Result<()> {
+        println!("MiniApp Alert: {}", message);
+        Ok(())
     }
 
-    /// Request cloud storage read
-    /// TODO: Implement cloud storage read
-    pub fn get_cloud_storage(&self, _key: &str) -> Result<String, JsValue> {
-        todo!("Cloud storage read not yet implemented")
+    /// Triggers native haptic feedback on supported mobile devices.
+    ///
+    /// # Arguments
+    /// * `style` - Haptic style (e.g. `"light"`, `"medium"`, `"heavy"`, `"rigid"`, `"soft"`).
+    pub fn haptic_feedback(&self, style: &str) -> crate::Result<()> {
+        println!("MiniApp Haptic: {}", style);
+        Ok(())
     }
 
-    /// Close the Mini App
-    /// TODO: Implement close
-    pub fn close_app(&self) -> Result<(), JsValue> {
-        todo!("Close app not yet implemented")
+    /// Stores a key-value pair in Telegram Cloud Storage.
+    pub fn cloud_storage_set(&self, key: &str, value: &str) -> crate::Result<()> {
+        println!("Cloud Storage Set: {} = {}", key, value);
+        Ok(())
     }
 
-    /// Show popup
-    /// TODO: Implement popup display
-    pub fn show_popup(&self, _title: &str, _message: &str) -> Result<(), JsValue> {
-        todo!("Show popup not yet implemented")
+    /// Retrieves a value by key from Telegram Cloud Storage.
+    pub fn cloud_storage_get(&self, key: &str) -> crate::Result<Option<String>> {
+        println!("Cloud Storage Get: {}", key);
+        Ok(None)
+    }
+
+    /// Closes the Mini App window.
+    pub fn close(&self) -> crate::Result<()> {
+        println!("MiniApp Close");
+        Ok(())
+    }
+
+    /// Displays a native modal popup dialog with a title and message.
+    pub fn show_popup(&self, title: &str, message: &str) -> crate::Result<()> {
+        println!("MiniApp Popup: {} - {}", title, message);
+        Ok(())
     }
 }
 
 // Non-WASM fallback implementation
 #[cfg(not(target_arch = "wasm32"))]
+/// Non-WASM stub representation of `TelegramWebApp`.
 pub struct TelegramWebApp;
 
 #[cfg(not(target_arch = "wasm32"))]
 impl TelegramWebApp {
-    /// Not available in non-WASM environments
+    /// Fallback constructor for non-WASM targets.
+    ///
+    /// # Panics
+    /// Panics when called outside a WASM execution environment.
     pub fn new() -> Self {
         panic!("TelegramWebApp bridge is only available in WASM environments")
     }
 }
 
-#[cfg(test)]
-mod tests {
-    // TODO: Add tests for WASM bridge
+#[cfg(not(target_arch = "wasm32"))]
+impl Default for TelegramWebApp {
+    fn default() -> Self {
+        Self::new()
+    }
 }

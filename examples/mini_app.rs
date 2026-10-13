@@ -9,27 +9,20 @@
 #[cfg(feature = "mini-app")]
 use telegram_rs_2::mini_app::InitData;
 
-
 fn main() {
     #[cfg(feature = "mini-app")]
     {
         println!("Telegram Mini App Example");
-        println!("This example demonstrates Mini App setup with initData validation.");
-        
-        // TODO: Implement complete example
-        println!("Full implementation coming soon...");
-        
-        // Example of what the full implementation might look like:
-        // let raw_init_data = "query_id=123&user=...&auth_date=456&hash=abc";
-        // match InitData::parse(raw_init_data) {
-        //     Ok(init_data) => {
-        //         println!("InitData parsed successfully");
-        //         if let Ok(valid) = init_data.validate("bot_token") {
-        //             println!("InitData is valid: {}", valid);
-        //         }
-        //     }
-        //     Err(e) => eprintln!("Failed to parse initData: {}", e),
-        // }
+        let raw_init_data = "query_id=sample_query_123&auth_date=1700000000&hash=mock_hash";
+        match InitData::parse(raw_init_data) {
+            Ok(init_data) => {
+                println!(
+                    "Parsed InitData: query_id={:?}, auth_date={}",
+                    init_data.query_id, init_data.auth_date
+                );
+            }
+            Err(e) => eprintln!("Failed to parse initData: {}", e),
+        }
     }
 
     #[cfg(not(feature = "mini-app"))]
